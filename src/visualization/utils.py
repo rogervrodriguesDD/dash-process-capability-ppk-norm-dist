@@ -128,7 +128,7 @@ def get_scatter_plot_colors(*, process_data_obj: ProcessData, start_date: str, e
             colors_plot.append(config.layout_config.plt_markers_outliers_color)
     return colors_plot
 
-def calculate_normal_distribution(samples: np.array) -> np.array, np.array:
+def calculate_normal_distribution(samples: np.array):
     """
     Create a pair of arrays (x_dist_plot, y_dist_plot) for the normal probability curve
     fitted on the given samples.
