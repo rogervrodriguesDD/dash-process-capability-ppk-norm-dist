@@ -1,11 +1,30 @@
+import datetime
 import numpy as np
+import pandas as pd
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-import datetime
 
 from app_config import config
+from data.process_data import ProcessData
 
-def get_bar_plot_hovertemplate(*, time_unit, time_unit_format, process_data_obj, ppk_rep_df, ppk_goal, prob_dist_name, circ):
+def get_bar_plot_hovertemplate(*, time_unit: str, time_unit_format: str, process_data_obj: ProcessData,
+                                ppk_rep_df: pd.DataFrame, ppk_goal: float, prob_dist_name: str, circ: str) -> list:
+    """
+    Create the hovertemplate list for the Bar plot.
+    Obs.: All arguments must be passed as kwargs.
+
+    Args:
+        time_unit (str): Time unit name used as reference of the plot.
+        time_unit_format (str): Time unit format to be printed.
+        process_data_obj (ProcessData): Process Data object related to the plotted report.
+        ppk_rep_df (pd.DataFrame): Dataframe with calculated Ppk index.
+        ppk_goal (float): Ppk goal related to the plotted report.
+        prob_dist_name (str): Name of the probability distribution considered in calculation of Ppk index.
+        circ (str): Circuit name related to the plotted report.
+
+    Returns:
+        hovertemplate (list): List of strings with the points informations.
+    """
 
     hovertemplate = [
         '''<b>{}:</b> {}<br><br>
@@ -27,7 +46,20 @@ def get_bar_plot_hovertemplate(*, time_unit, time_unit_format, process_data_obj,
 
     return hovertemplate
 
-def get_scatter_plot_hovertemplate(*, process_data_obj, start_date, end_date, circ):
+def get_scatter_plot_hovertemplate(*, process_data_obj: ProcessData, start_date: str, end_date: str, circ: str) -> list:
+    """
+    Create the hovertemplate list for the Scatter plot.
+    Obs.: All arguments must be passed as kwargs.
+
+    Args:
+        process_data_obj (ProcessData): Process Data object related to the plotted report.
+        start_date (str): Start date considered when filtering the data before plot.
+        end_date (str): End date considered when filtering the data before plot.
+        circ (str): Circuit name related to the plotted report.
+
+    Returns:
+        hovertemplate (list): List of strings with the points informations.
+    """
 
     data_index = process_data_obj.data.loc[start_date:end_date, circ].index
     data_values = process_data_obj.data.loc[start_date:end_date, circ].values
@@ -46,7 +78,21 @@ def get_scatter_plot_hovertemplate(*, process_data_obj, start_date, end_date, ci
 
     return hovertemplate
 
-def get_bar_plot_colors(*, ppk_rep_df, circ, ppk_goal):
+def get_bar_plot_colors(*, ppk_rep_df, circ, ppk_goal) -> list:
+    """
+    Create list with individual bar colors for the Bar plot.
+    The colors considered are 'plt_markers_color' and 'plt_markers_outliers_color'
+    listed in the conf.yml file (conf/base folder).
+    Obs.: All arguments must be passed as kwargs.
+
+    Args:
+        ppk_rep_df (pd.DataFrame): Dataframe with calculated Ppk index.
+        circ (str): Circuit name related to the plotted report.
+        ppk_goal (float): Ppk goal value related to the plotted report.
+
+    Returns:
+        colors_plot (list): List with individual bar colors for the plot.
+    """
 
     colors_plot = []
     for ppk_val in ppk_rep_df[(circ, 'PPK')].values:
@@ -57,7 +103,23 @@ def get_bar_plot_colors(*, ppk_rep_df, circ, ppk_goal):
 
     return colors_plot
 
-def get_scatter_plot_colors(*, process_data_obj, start_date, end_date, circ):
+def get_scatter_plot_colors(*, process_data_obj: ProcessData, start_date: str, end_date: str, circ: str) -> list:
+    """
+    Create list with individual markers colors for the Scatter plot.
+    The colors considered are 'plt_markers_color' and 'plt_markers_outliers_color'
+    listed in the conf.yml file (conf/base folder).
+    Obs.: All arguments must be passed as kwargs.
+
+    Args:
+        process_data_obj (ProcessData): Process Data object related to the plotted report.
+        start_date (str): Start date considered when filtering the data before plot.
+        end_date (str): End date considered when filtering the data before plot.
+        circ (str): Circuit name related to the plotted report.
+
+    Returns:
+        colors_plot (list): List with individual bar colors for the plot.
+    """
+
     colors_plot = []
     for value in process_data_obj.data.loc[start_date:end_date, circ].values:
         if (value >= process_data_obj.specifications_limits[circ]['LSL'] ) & (value <= process_data_obj.specifications_limits[circ]['USL']):
@@ -66,7 +128,19 @@ def get_scatter_plot_colors(*, process_data_obj, start_date, end_date, circ):
             colors_plot.append(config.layout_config.plt_markers_outliers_color)
     return colors_plot
 
-def calculate_normal_distribution(samples):
+def calculate_normal_distribution(samples: np.array) -> np.array, np.array:
+    """
+    Create a pair of arrays (x_dist_plot, y_dist_plot) for the normal probability curve
+    fitted on the given samples.
+
+    Args:
+        samples (np.array): Sample values
+
+    Returns:
+        x_dist_plot (np.array): X coordinates of the fitted curve.
+        y_dist_plot (np.array): Y coodinates of the fitted curve.
+    """
+
     mu = np.mean(samples)
     sigma = np.std(samples)
 
@@ -75,7 +149,20 @@ def calculate_normal_distribution(samples):
 
     return x_dist_plot, y_dist_plot
 
-def create_figure_report(process_data_obj, ppk_rep_monthly, ppk_rep_daily, process_data_selected_month):
+def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.DataFrame,
+                    ppk_rep_daily: pd.DataFrame, process_data_selected_month: int) -> go.Figure:
+    """
+    Create figure of the full report.
+
+    Args:
+        process_data_obj (ProcessData): Process Data object related to the plotted report.
+        ppk_rep_monthly (pd.DataFrame): Dataframe with calculated Ppk index using a monthly window.
+        ppk_rep_daily (pd.DataFrame): Dataframe with calculated Ppk index using a daily window.
+        process_data_selected_month (int): Selected month related to the daily report.
+
+    Returns:
+        fig_report (go.Figure): Figure of the Ppk index full report.
+    """
 
     nrows = len(process_data_obj.circuit_names)
 
@@ -198,7 +285,19 @@ def create_figure_report(process_data_obj, ppk_rep_monthly, ppk_rep_daily, proce
 
     return fig_report
 
-def create_figure_control_chart(process_data_obj, start_date, end_date):
+def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, end_date: str) -> go.Figure:
+    """
+    Create figure of the Control Chart.
+
+    Args:
+        process_data_obj (ProcessData): Process Data object related to the plotted report.
+        start_date (str): Start date considered when filtering the data before plot.
+        end_date (str): End date considered when filtering the data before plot.
+
+    Returns:
+        fig_control_chart (go.Figure): Figure of the Control Chart plot.
+    """
+
 
     nrows = len(process_data_obj.circuit_names)
 

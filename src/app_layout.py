@@ -10,6 +10,9 @@ from process_capability_index.utils import calculate_cap_index_ppk
 from visualization.utils import create_figure_report, create_figure_control_chart
 
 def banner_layout():
+    """
+    Creates the layout division of the upper banner.
+    """
     banner_layout_div =  html.Div(
             id = 'banner',
             children = [
@@ -28,6 +31,9 @@ def banner_layout():
     return banner_layout_div
 
 def tab_index_report_layout():
+    """
+    Create the Tab component with the Ppk index complete report.
+    """
     tab_index_report_layout = \
                 dcc.Tab(
                     label = 'Index Report',
@@ -58,6 +64,9 @@ def tab_index_report_layout():
     return tab_index_report_layout
 
 def tab_control_chart_layout():
+    """
+    Create the Tab component with the Control Chart report.
+    """
     tab_control_chart_layout = \
                 dcc.Tab(
                     label = 'Control Chart',
@@ -91,6 +100,9 @@ def tab_control_chart_layout():
     return tab_control_chart_layout
 
 def tab_about_layout():
+    """
+    Create the Tab component with the documentation file 'Basics on Capability Control'
+    """
 
     basics_on_cap_control_path = DOCS_ROOT / config.documentation_tab_config.basics_on_cap_control_file
     with open(basics_on_cap_control_path, encoding='utf-8') as f:
@@ -105,7 +117,7 @@ def tab_about_layout():
                     children = [
                             html.Div(
                                 [dcc.Markdown(basics_on_cap_control, mathjax=True)],
-                                style = {'width': config.documentation_tab_config.doc_tab_width} 
+                                style = {'width': config.documentation_tab_config.doc_tab_width}
                                 )
 
                             ],
@@ -115,6 +127,9 @@ def tab_about_layout():
 
 
 def set_tabs_layout():
+    """
+    Create the layout division component that contains all Tab components of the application.
+    """
     set_tabs_layout = \
         html.Div([
             dcc.Tabs(
@@ -143,6 +158,9 @@ app_layout = html.Div(children=
     [Input('month-selector', 'value')]
 )
 def create_figure_report_callback(selected_month):
+    """
+    Callback to create and return the figure of the Ppk index full report.
+    """
 
     df_A_c1_filtered = data_A_c1.data.loc[data_A_c1.data.index.month == selected_month]
 
@@ -162,6 +180,9 @@ def create_figure_report_callback(selected_month):
     Input('date-range-selector', 'end_date')]
 )
 def create_figure_control_chart_callback(start_date, end_date):
+    """
+    Callback to create and return the figure of the Control Chart.
+    """
 
     fig_control_chart = create_figure_control_chart(data_A_c1, start_date, end_date)
 

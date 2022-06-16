@@ -11,6 +11,9 @@ CONFIG_FILE_PATH = APP_ROOT.joinpath('conf/base/conf.yml').resolve()
 EXT_STYLESHEETS_REL_PATH = ['.assets/bWlwgP.css']
 
 class AppConfig(BaseModel):
+    """
+    Create Application-level configuration object.
+    """
 
     app_name: str
     app_title: str
@@ -19,6 +22,10 @@ class AppConfig(BaseModel):
     debug: bool
 
 class LayoutConfig(BaseModel):
+    """
+    Create Layout configuration object.
+    """
+
     banner_txt_color: str
     banner_bkg_color: str
     banner_width: str
@@ -34,23 +41,46 @@ class LayoutConfig(BaseModel):
     plt_template_name: str
 
 class DocumentationTabConfig(BaseModel):
+    """
+    Create configuration object to load the Markdown documentation files as
+    tabs in the application.
+    """
+
     basics_on_cap_control_file: str
     doc_tab_width: str
 
 class Config(BaseModel):
+    """
+    Create master configuration object.
+    """
+
     app_config: AppConfig
     layout_config: LayoutConfig
     documentation_tab_config: DocumentationTabConfig
 
 def find_config_file() -> Path:
-    """Locate the configuration file."""
+    """
+    Locate the configuration file.
+
+    Args: None
+    Returns:
+        CONFIG_FILE_PATH (Path): Path to the configuration YAML file.
+    """
     if CONFIG_FILE_PATH.is_file():
         return CONFIG_FILE_PATH
     raise Exception(f"Config not found at {CONFIG_FILE_PATH!r}")
 
 
 def fetch_config_from_yaml(cfg_path: Path = None) -> YAML:
-    """Parse YAML containing the package configuration."""
+    """
+    Parse YAML containing the package configuration.
+
+    Args:
+        cfg_path (Path, optional): Path to the configuration YAML to be loaded.
+
+    Returns:
+        parsed_config (YAML): Parsed YAML object with configurations parameters.
+    """
 
     if not cfg_path:
         cfg_path = find_config_file()
@@ -63,7 +93,15 @@ def fetch_config_from_yaml(cfg_path: Path = None) -> YAML:
 
 
 def create_and_validate_config(parsed_config: YAML = None) -> Config:
-    """Run validation on config values."""
+    """
+    Run validation on config values.
+    
+    Args:
+        parsed_config (YAML): Parsed YAML object which parameters will be unpacked
+                            and loaded as attributes of the 'config' object.
+    Returns:
+        _config (Config): Master configuration object with validated configuration values.
+    """
     if parsed_config is None:
         parsed_config = fetch_config_from_yaml()
 

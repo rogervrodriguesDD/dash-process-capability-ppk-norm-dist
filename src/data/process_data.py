@@ -4,6 +4,23 @@ import pandas as pd
 import typing as t
 
 class ProcessData():
+    """
+    Create a new object that contains all informations needed to calculate the
+    capability indices.
+
+    ...
+
+    Attributes:
+        plant_name (str): Name of the plant where the data is being colected
+        circuit_names (list): List of strings for each circuit where the measurements occur
+        specifications_limits (dict): Dictionary with specification limits ('LSL' and 'USL') defined for each
+                                    circuit name given in the circuit_names attribute.
+        ppk_goals (dict): Dictionary with ppk goal defined for each circuit name given in the circuit_name
+                        attribute.
+        data (pd.DataFrame, optional): DataFrame with columns named on the circuit names and timestamp index.
+                                    Obs.: If data is not given, the dataset will be generated using the
+                                    '_create_sample_data' method.
+    """
     def __init__(self,
                 plant_name: str,
                 circuit_names: t.Sequence[str],
@@ -27,6 +44,11 @@ class ProcessData():
             self.data = self._create_sample_data()
 
     def _check_for_specifications_limits(self):
+        """
+        Check if all the circuits listed in the 'circuit_names' attribute has an related specification
+        limits in the 'specifications_limits' attribute. This check is simple and only verify if the
+        circuit name is a key in the 'specifications_limits' attribute.
+        """
         set_circ_names = set(self.circuit_names)
         set_circ_spec_lim = set(self.specifications_limits.keys())
 
@@ -35,7 +57,27 @@ class ProcessData():
         if set_circ_spec_lim.difference(set_circ_names) != set():
             raise OSError("There are extra values of specification limits for the circuit(s): ", ", ".join(set_circ_spec_lim.difference(set_circ_names)))
 
+    def _check_for_ppk_goals(self):
+        """
+        Check if all the circuits listed in the 'circuit_names' attribute has an related ppk goal
+        in the 'ppk_goals' attribute. This check is simple and only verify if the circuit name is a key
+        in the referred attribute.
+        """
+        set_circ_names = set(self.circuit_names)
+        set_circ_ppk_goals = set(self.ppk_goals.keys())
+
+        if set_circ_names.difference(set_circ_ppk_goals) != set():
+            raise OSError("There are missing values for ppk goal for the circuit(s): ", ", ".join(set_circ_names.difference(set_circ_ppk_goals)))
+        if set_circ_ppk_goals.difference(set_circ_names) != set():
+            raise OSError("There are extra values of ppk goal for the circuit(s): ", ", ".join(set_circ_ppk_goals.difference(set_circ_names)))
+
+
     def _create_sample_data(self) -> pd.DataFrame:
+        """
+        Create a set of samples for each circuit listed in the 'circuit_names' attribute.
+        The samples are generated considering the specification limits given for the specific circuit,
+        although the are noise added to the signal to simulate unexpected behavior.
+        """
 
         # Creating the timestamps for the index
         current_date = datetime.datetime.now()
