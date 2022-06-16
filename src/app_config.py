@@ -95,7 +95,7 @@ def fetch_config_from_yaml(cfg_path: Path = None) -> YAML:
 def create_and_validate_config(parsed_config: YAML = None) -> Config:
     """
     Run validation on config values.
-    
+
     Args:
         parsed_config (YAML): Parsed YAML object which parameters will be unpacked
                             and loaded as attributes of the 'config' object.

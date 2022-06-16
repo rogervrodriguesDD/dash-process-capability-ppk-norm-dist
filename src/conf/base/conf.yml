@@ -4,7 +4,7 @@ app_name: dash_process_capability_ppk_norm_dist
 app_title: Report for Process Capability Index (PPK)
 host: 0.0.0.0
 port: 8080
-debug: True
+debug: False
 
 # Layout config
 banner_bkg_color: "#004c6d"

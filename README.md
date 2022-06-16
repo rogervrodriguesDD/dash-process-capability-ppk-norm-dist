@@ -44,8 +44,8 @@ The project has the following structure.
 
 ## TODOs
 
-- [ ] 1. Need: Documentation of the classes and functions
-- [ ] 2. New feature: Add a Dropdown to access the reports for different plants
+- [x] 1. Need: Documentation of the classes and functions
+- [x] 2. New feature: Add a Dropdown to access the reports for different plants
 - [ ] 3. Layout fix: Remove yticks values from the Histogram graph.
 - [ ] 4. Layout improvement: Add index values in the Bar graphs.
 - [ ] 5. Layout improvement: Add specification limits values in the Control Chart.

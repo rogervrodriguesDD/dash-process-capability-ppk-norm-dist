@@ -109,3 +109,27 @@ class ProcessData():
             data = pd.concat([data, data_], axis=1, ignore_index=False)
 
         return data
+
+class SetProcessData():
+    """
+    Create new object that contains a set of multiple ProcessData objects.
+    ...
+
+    Attributes:
+        process_data_obj (list): List with multiple ProcessData objects.
+
+    Methods:
+        __getitem__(plant_name): Return the ProcessData object for given 'plant_name' 
+
+    """
+    def __init__(self, process_data_objs):
+
+        if not isinstance(process_data_objs, list):
+            process_data_objs = list(process_data_objs)
+        self.process_data_objs = process_data_objs
+
+        self.list_plant_names = [obj.plant_name for obj in process_data_objs]
+
+    def __getitem__(self, plant_name):
+        idx_plant_name = self.list_plant_names.index(plant_name)
+        return self.process_data_objs[idx_plant_name]
