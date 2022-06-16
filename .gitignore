@@ -1,7 +1,7 @@
 /notebooks/.ipynb_checkpoints/
 /src/conf/local/**
 
-**/__pycache__/
+**/**/__pycache__/
 
 # Keep empty folders
 !.gitkeep
