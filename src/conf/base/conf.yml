@@ -1,0 +1,26 @@
+
+# App config
+app_name: dash_process_capability_ppk_norm_dist
+app_title: Report for Process Capability Index (PPK)
+host: 0.0.0.0
+port: 8080
+debug: True
+
+# Layout config
+banner_bkg_color: "#004c6d"
+banner_txt_color: "#F1F1F1"
+banner_width: "100%"
+dash_bkg_color: "#F1F1F1"
+dash_txt_color: "#7E909A"
+plt_markers_color: "#004c6d"
+plt_markers_outliers_color:  "#AC3E31"
+plt_txt_color: "#202020"
+plt_paper_color: "#7E909A"
+plt_line_color: "#00f5ff"
+plt_lim_line_color: red
+plt_lim_control_line:  black
+plt_template_name: seaborn
+
+# Documentation tab config
+basics_on_cap_control_file: 'basics_on_cap_control.md'
+doc_tab_width: '50%'
