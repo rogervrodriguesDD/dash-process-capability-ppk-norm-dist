@@ -8,6 +8,15 @@ the probability distribution of the monitored variables is Gaussian. Also, the d
 in the execution of the application.
 
 ## Documentation
+
+**Running the application**  
+
+After cloning the project, install the application dependencies with the command `pip install -r requirements.txt`. Then, to run the application execute the command.
+
+`python src/app.py --host=localhost --port=8080 --debug=False`
+
+The arguments `--host`, `--port`, and `--debug` are optional and their default values are set in the `src/config/base/conf.yml` file.
+
 **Basics on Capability Control of Process** ([docs/basics_on_cap_control.md](docs/basics_on_cap_control.md))
 
 ## Structure of the project
@@ -51,4 +60,4 @@ The project has the following structure.
 - [ ] 5. Layout improvement: Add specification limits values in the Control Chart.
 - [ ] 6. Layout improvement: Add average value in the Control Chart.
 - [ ] 7. QA: Create unit tests.
-- [ ] 8. Improvement: Create function to change app configuration through line command arguments.
+- [x] 8. Improvement: Create function to change app configuration through line command arguments.
