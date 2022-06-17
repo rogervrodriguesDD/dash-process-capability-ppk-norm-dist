@@ -1,3 +1,4 @@
+import datetime
 from dash import html, dcc, callback, callback_context
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
@@ -217,7 +218,7 @@ def get_date_range_selector_options_callback(selected_plant_name):
     data_selected_plant = data_ind_park[selected_plant_name]
     min_date_allowed=data_selected_plant.data.index.min()
     max_date_allowed=data_selected_plant.data.index.max()
-    start_date=data_selected_plant.data.index.min()
+    start_date=data_selected_plant.data.index.max() - datetime.timedelta(days=30)
     end_date=data_selected_plant.data.index.max()
 
     return min_date_allowed, max_date_allowed, start_date, end_date

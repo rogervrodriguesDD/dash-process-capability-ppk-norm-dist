@@ -191,6 +191,7 @@ def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.Data
             y = ppk_rep_monthly[(circ, 'PPK')],
             marker_color = colors_month,
             hovertemplate=hovertemplate_monthly,
+            text=['{:.3f}'.format(ppk) for ppk in ppk_rep_monthly[(circ, 'PPK')]],
             ),
             row=i+1, col=1
         )
@@ -209,6 +210,7 @@ def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.Data
             y = ppk_rep_daily[(circ, 'PPK')],
             marker_color = colors_daily,
             hovertemplate = hovertemplate_daily,
+            text=['{:.3f}'.format(ppk) for ppk in ppk_rep_daily[(circ, 'PPK')]],
             ),
             row=i+1, col=2
         )
@@ -240,7 +242,8 @@ def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.Data
         fig_report.add_trace(go.Histogram(
             x=process_data_selected_month[circ].values,
             histnorm='probability density',
-            opacity=0.6,
+            hoverinfo='skip',
+            opacity=0.8,
             marker = dict(color = config.layout_config.plt_markers_color)
         ), row = i+1, col = 3)
 
@@ -251,7 +254,8 @@ def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.Data
             x = x_dist_plot,
             y = y_dist_plot,
             mode = 'lines',
-            marker = dict(color = config.layout_config.plt_line_color)
+            marker = dict(color = config.layout_config.plt_line_color),
+            hoverinfo='skip',
         ), row = i+1, col = 3)
 
         # Plotting the specification limits
@@ -262,9 +266,10 @@ def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.Data
                         x0=lim,
                         x1=lim,
                         y0=0.0,
-                        y1=0.35,
+                        y1=1.5 * np.max(y_dist_plot),
                         line=dict(
                             color=config.layout_config.plt_lim_line_color,
+                            dash=config.layout_config.plt_lim_line_dash,
                             width=3
                         )
                     ),
@@ -274,12 +279,17 @@ def create_figure_report(process_data_obj: ProcessData, ppk_rep_monthly: pd.Data
     for i in range(nrows):
         for c in [1, 2]:
             fig_report.update_yaxes(title_text='ppk', row=i+1, col=c)
+            fig_report.update_xaxes(title_text='date', row=i+1, col=c)
+
+        # Removing yaxes for the histogram
+        fig_report.update_xaxes(title_text='controlled variable', visible=True, row=i+1, col=3)
+        fig_report.update_yaxes(title_text='prob. density', visible=True, row=i+1, col=3)
 
     fig_report.update_layout(
         template = config.layout_config.plt_template_name,
         hovermode = 'x',
-        width = 1400,
-        height = 400 * nrows,
+        width = config.layout_config.plt_full_report_width,
+        height = config.layout_config.plt_full_report_height * nrows,
         showlegend = False
     )
 
@@ -306,7 +316,10 @@ def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, 
         cols=2,
         column_widths = [0.85, 0.15],
         subplot_titles=['Control Chart', 'Violin Plot'] * nrows,
-        row_titles = process_data_obj.circuit_names
+        row_titles = process_data_obj.circuit_names,
+        shared_yaxes=True,
+        vertical_spacing=0.15,
+        horizontal_spacing=0.03
         )
 
     for i, circ in enumerate(process_data_obj.circuit_names):
@@ -325,7 +338,7 @@ def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, 
             go.Scatter(
                 x = process_data_obj.data.loc[start_date:end_date, circ].index,
                 y = process_data_obj.data.loc[start_date:end_date, circ].values,
-                mode = 'markers+lines',
+                mode = 'markers',
                 marker = dict(color = colors_control_chart),
                 line=dict(color = config.layout_config.plt_markers_color),
                 name = circ,
@@ -334,7 +347,8 @@ def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, 
                 row=i+1, col=1
         )
 
-        for lim in process_data_obj.specifications_limits[circ].values():
+        # Adding specification limits lines
+        for lim_text, lim in process_data_obj.specifications_limits[circ].items():
             if lim is not None:
                 fig_control_chart.add_shape(
                     dict(
@@ -344,11 +358,56 @@ def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, 
                         y1=lim,
                         line=dict(
                             color=config.layout_config.plt_lim_line_color,
-                            width=3
+                            width=2,
+                            dash=config.layout_config.plt_lim_line_dash
                         )
                     ),
                     row=i+1, col=1
                 )
+
+                # Adding text with names of the limits
+                fig_control_chart.add_annotation(
+                    go.layout.Annotation(
+                        text=f"<b>{lim_text}</b>",
+                        xref='paper',
+                        yref='paper',
+                        x=(pd.to_datetime(start_date, format='%Y-%m-%dT%H:%M:%S') - datetime.timedelta(days=1)),
+                        y=lim,
+                        showarrow=False,
+                        font = dict(color=config.layout_config.plt_lim_line_color)
+                    ),
+                    row=i+1, col=1
+                )
+
+        # Adding average line
+        average=process_data_obj.data.loc[start_date:end_date, circ].mean()
+        fig_control_chart.add_shape(
+            dict(
+                x0=start_date,
+                x1=end_date,
+                y0=average,
+                y1=average,
+                line=dict(
+                    color=config.layout_config.plt_average_line,
+                    width=3,
+                    dash=config.layout_config.plt_average_line_dash
+                )
+            ),
+            row=i+1, col=1
+        )
+
+        fig_control_chart.add_annotation(
+            go.layout.Annotation(
+                text="<b>Average</b>",
+                xref='paper',
+                yref='paper',
+                x=(pd.to_datetime(start_date, format='%Y-%m-%dT%H:%M:%S') - datetime.timedelta(days=1)),
+                y=average,
+                showarrow=False,
+                font = dict(color=config.layout_config.plt_average_line)
+            ),
+            row=i+1, col=1
+        )
 
 
         fig_control_chart.add_trace(
@@ -361,7 +420,8 @@ def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, 
                 fillcolor=config.layout_config.plt_markers_color,
                 marker=dict(color=config.layout_config.plt_markers_color),
                 line_color='black',
-                opacity=0.6
+                opacity=0.6,
+                hoverinfo='skip'
             ),
             row = i+1, col=2
         )
@@ -369,13 +429,14 @@ def create_figure_control_chart(process_data_obj: ProcessData, start_date: str, 
 
     for i in range(nrows):
         fig_control_chart.update_yaxes(title_text='process variable', row=i+1, col=1)
+        fig_control_chart.update_xaxes(title_text='date', row=i+1, col=1)
         fig_control_chart.update_xaxes(title_text='', row=i+1, col=2)
 
     fig_control_chart.update_layout(
                 template = config.layout_config.plt_template_name,
                 hovermode = 'x',
-                width = 1400,
-                height = 400 * nrows,
+                width = config.layout_config.plt_control_chart_width,
+                height = config.layout_config.plt_control_chart_height * nrows,
                 showlegend = False
     )
 

@@ -37,8 +37,15 @@ class LayoutConfig(BaseModel):
     plt_paper_color: str
     plt_line_color: str
     plt_lim_line_color: str
-    plt_lim_control_line: str
+    plt_lim_line_dash: str
+    plt_average_line: str
+    plt_average_line_dash: str
     plt_template_name: str
+
+    plt_control_chart_width: int
+    plt_control_chart_height: int
+    plt_full_report_width: int
+    plt_full_report_height: int
 
 class DocumentationTabConfig(BaseModel):
     """

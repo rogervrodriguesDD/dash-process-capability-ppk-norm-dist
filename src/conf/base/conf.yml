@@ -18,8 +18,19 @@ plt_txt_color: "#202020"
 plt_paper_color: "#7E909A"
 plt_line_color: "#00f5ff"
 plt_lim_line_color: red
-plt_lim_control_line:  black
+plt_average_line:  "#000000"
+
+plt_lim_line_dash: longdash
+plt_average_line_dash: solid
+
+plt_control_chart_width: 1400
+plt_control_chart_height: 400
+plt_full_report_width: 1400
+plt_full_report_height: 400
+
 plt_template_name: seaborn
+
+
 
 # Documentation tab config
 basics_on_cap_control_file: 'basics_on_cap_control.md'
