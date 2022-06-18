@@ -2,6 +2,9 @@
 /src/conf/local/**
 
 **/**/__pycache__/
+**/**/.pytest_cache/
+
+.tox/
 
 # Keep empty folders
 !.gitkeep

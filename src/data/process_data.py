@@ -39,9 +39,12 @@ class ProcessData():
             self.circuit_names = [circuit_names]
 
         self._check_for_specifications_limits()
+        self._check_for_ppk_goals()
 
         if data is None:
             self.data = self._create_sample_data()
+
+        self._check_for_data_columns()
 
     def _check_for_specifications_limits(self):
         """
@@ -71,6 +74,18 @@ class ProcessData():
         if set_circ_ppk_goals.difference(set_circ_names) != set():
             raise OSError("There are extra values of ppk goal for the circuit(s): ", ", ".join(set_circ_ppk_goals.difference(set_circ_names)))
 
+    def _check_for_data_columns(self):
+        """
+        Check if all the circuits listed in the 'circuit_names' attribute has an related column
+        in the input data.
+        """
+        set_circ_names = set(self.circuit_names)
+        set_data_columns = set(self.data.columns)
+
+        if set_circ_names.difference(set_data_columns) != set():
+            raise OSError("There are missing columns in the input data for the circuit(s): ", ", ".join(set_circ_names.difference(set_data_columns)))
+        if set_data_columns.difference(set_circ_names) != set():
+            raise OSError("There are extra columns in the input data for the circuit(s): ", ", ".join(set_data_columns.difference(set_circ_names)))
 
     def _create_sample_data(self) -> pd.DataFrame:
         """
@@ -119,7 +134,7 @@ class SetProcessData():
         process_data_obj (list): List with multiple ProcessData objects.
 
     Methods:
-        __getitem__(plant_name): Return the ProcessData object for given 'plant_name' 
+        __getitem__(plant_name): Return the ProcessData object for given 'plant_name'
 
     """
     def __init__(self, process_data_objs):
