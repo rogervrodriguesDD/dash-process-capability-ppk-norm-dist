@@ -33,7 +33,7 @@ if __name__ == '__main__':
     Example of command:
     ```
     python app.py --host=localhost --port=8080 --debug=False
-    ```    
+    ```
     """
 
     parser = _setup_parser_run_app_config()

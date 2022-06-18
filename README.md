@@ -38,13 +38,13 @@ The project has the following structure.
 |   |   |
 |   |   └── local     <- Configuration files with sensible informations (as credentials, for example)
 |   |
-|   ├── data          <- Files related functions or classes to generate or load data
+|   ├── data          <- Files related to functions or classes to generate or load data
 |   |
 |   ├── logs          <- Files related to logging functions
 |   |
 |   ├── process_capability_index  <- Files related functions used to calculate the capability indices
 |   |
-|   ├── visualization <- Files related functions or classes to generate the figures
+|   ├── visualization <- Files related to functions or classes to generate the figures
 |   |
 |   └── app.py         <- Main file of the application, which has the execution function
 |
@@ -59,5 +59,5 @@ The project has the following structure.
 - [x] 4. Layout improvement: Add index values in the Bar graphs.
 - [x] 5. Layout improvement: Add specification limits values in the Control Chart.
 - [x] 6. Layout improvement: Add average value in the Control Chart.
-- [ ] 7. QA: Create unit tests.
+- [x] 7. QA: Create unit tests.
 - [x] 8. Improvement: Create function to change app configuration through line command arguments.
