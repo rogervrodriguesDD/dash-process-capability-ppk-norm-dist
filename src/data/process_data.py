@@ -94,34 +94,43 @@ class ProcessData():
         although the are noise added to the signal to simulate unexpected behavior.
         """
 
-        # Creating the timestamps for the index
-        current_date = datetime.datetime.now()
-        previous_90d_date = current_date - datetime.timedelta(days = 90)
-        start_date = datetime.datetime(year = previous_90d_date.year,
-                                      month = previous_90d_date.month,
-                                      day = 1)
-        index = pd.date_range(start = start_date, end = current_date, freq = '4H')
+        index_data_input = pd.date_range(start = datetime.datetime.now()- datetime.timedelta(days=90),
+                            end = datetime.datetime.now(),
+                            freq = '1H')
 
-        # Creating the dataframe
-        data = pd.DataFrame(index=index)
+        n_samples = len(index_data_input)
+        n_samples_instability = int(n_samples / 3)
+        values = np.zeros(shape=(n_samples, len(self.circuit_names)))
 
-        for circ in self.circuit_names:
+        for i, circ in enumerate(self.circuit_names):
+            lsl = self.specifications_limits[circ]['LSL']
+            usl = self.specifications_limits[circ]['USL']
 
-            # Generating the sample points
-            lls,uls  = self.specifications_limits[circ]['LSL'], self.specifications_limits[circ]['USL']
-            mu = (lls + uls) / 2 + np.random.uniform(0.0, 2.5)
-            sigma = np.random.uniform(0.0, 5.0)
+            expected_average = (usl + lsl) / 2
+            max_expected_std = (usl - lsl) / 7
+            simulated_std = np.random.uniform(low=0.1 * max_expected_std, high=max_expected_std)
 
-            samples = np.random.normal(loc=mu, scale=sigma, size=len(index))
+            values[:,i] = (np.ones(shape=(n_samples, 1)) * expected_average +\
+                            np.random.normal(loc = 0.0, scale=simulated_std, size=(n_samples, 1))).reshape(-1,)
 
-            data_ = pd.DataFrame(data=samples, index=index, columns=[circ])
 
-            # Randomly drop some samples
-            drop_pct = 0.1
-            drop_index = np.random.choice([*range(len(index))], size=int(len(index) * drop_pct), replace=False)
-            data_.iloc[drop_index] = np.nan
+            # Adding instability
+            idx_instability = np.random.choice(range(0, n_samples - n_samples_instability))
 
-            data = pd.concat([data, data_], axis=1, ignore_index=False)
+            simulated_average_instability = np.random.uniform(low=-max_expected_std, high=max_expected_std)
+            simulated_std_instability = np.random.uniform(low=max_expected_std, high=1.25 * max_expected_std)
+
+            values[idx_instability : idx_instability + n_samples_instability, i] = (
+                values[idx_instability : idx_instability + n_samples_instability, i] +
+                np.random.normal(loc = simulated_average_instability, scale=simulated_std_instability,
+                                 size=(n_samples_instability, 1)).reshape(-1,)
+            )
+
+        data = pd.DataFrame(
+            data = values,
+            index = index_data_input,
+            columns = self.circuit_names
+        )
 
         return data
 
