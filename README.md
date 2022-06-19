@@ -12,7 +12,7 @@ in the execution of the application.
 ![Screenshot of the index report](./docs/screenshot_index_report.png)
 
 
-![Screenshot of the control chart](./docs/screenshot_control_chart.png)
+![Screenshot of the control chart](./docs/screenshot_control_chart.PNG)
 
 
 ## Documentation

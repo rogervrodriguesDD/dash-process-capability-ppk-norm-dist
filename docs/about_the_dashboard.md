@@ -13,7 +13,7 @@ The first two shows the index **PPK** for different time windows (Monthly and Da
 The colors of the bars are defined by the calculated value and the variable _Goal PPK_, which is draw with the horizontal red line.
 To have more details about the number of samples grouped, the specification limits, and also the Probability Distribution function considered (only Normal, in this case), the user can see the Hover text available. An example of the Hover text is shown below.
 
-![Example of the hover text available for the index report](./hovertemplate_index_report.png)
+![Example of the hover text available for the index report](./hovertemplate_index_report.PNG)
 
 The last column show the Histogram of the group of samples for the selected month. Also, the curve of the fitted Normal distribution is drawn. This figure is more informative in the sense of understand the definition of the index **PPK**, rather than give an information to decision making. Therefore, I always suggest to maintain this graph in the report, given that it is an excellent tool for training.
 
@@ -23,7 +23,7 @@ The vertical red lines plotted in the Histogram plot are the specification limit
 
 The control chart is divided in two columns, the Control Chart and the Violin Plot. Below, we see an example of the chart.
 
-![Example control chart](./example_control_chart.png)
+![Example control chart](./example_control_chart.PNG)
 
 The control chart is a scatter plot showing the sampling values with time. **Outliers** samples are plotted with the color red, as an indicative way to show that they are out of the specification range.
 The specification limits are drawn as the horizontal red lines, while the average of the sample values as the horizontal black line.
