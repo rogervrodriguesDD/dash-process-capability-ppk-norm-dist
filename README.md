@@ -7,6 +7,14 @@ Capability of the production process. In this example, the production process is
 the probability distribution of the monitored variables is Gaussian. Also, the data used is generated
 in the execution of the application.
 
+**Screenshots of the application**
+
+![Screenshot of the index report](./docs/screenshot_index_report.png)
+
+
+![Screenshot of the control chart](./docs/screenshot_control_chart.png)
+
+
 ## Documentation
 
 **Running the application**  
@@ -17,7 +25,11 @@ After cloning the project, install the application dependencies with the command
 
 The arguments `--host`, `--port`, and `--debug` are optional and their default values are set in the `src/config/base/conf.yml` file.
 
-**Basics on Capability Control of Process** ([docs/basics_on_cap_control.md](docs/basics_on_cap_control.md))
+**Basics on Capability Control of Process**
+Read a little of the basics [here](docs/basics_on_cap_control.md).
+
+**About the dashboard**
+Undestand a little more about the dashboard [here](docs/about_the_dashboard.md).
 
 ## Structure of the project
 ------------
